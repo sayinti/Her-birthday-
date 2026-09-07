@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120b16">
+<title>For Sundori Intisara ✦</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#09070c; --ink:#fff8fb; --muted:#c9b8c3; --rose:#ff7fa8; --pink:#ffb4ca;
+  --gold:#f4d28a; --glass:rgba(255,255,255,.08); --line:rgba(255,255,255,.14);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif}
+body{overflow:hidden}
+button,input{font:inherit}
+button{cursor:pointer}
+#app{position:relative;min-height:100svh;overflow:hidden;background:
+ radial-gradient(circle at 50% 20%,rgba(255,91,143,.18),transparent 32%),
+ radial-gradient(circle at 15% 85%,rgba(155,91,255,.12),transparent 28%),
+ linear-gradient(160deg,#0a0710,#160b17 55%,#08070c)}
+.noise{position:absolute;inset:-50%;opacity:.045;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");transform:rotate(7deg)}
+canvas#particles{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.screen{position:absolute;inset:0;display:grid;place-items:center;padding:24px;opacity:0;pointer-events:none;transform:translateY(18px) scale(.985);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.8,.2,1)}
+.screen.active{opacity:1;pointer-events:auto;transform:none}
+.content{width:min(920px,100%);text-align:center;position:relative;z-index:2}
+.eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);opacity:.9}
+h1,h2,h3,p{margin:0}
+h1,h2{font-family:"Cormorant Garamond",serif;font-weight:500}
+.hero-title{font-size:clamp(52px,14vw,118px);line-height:.84;letter-spacing:-.045em;margin:20px 0 22px}
+.hero-title span{display:block;background:linear-gradient(110deg,#fff,#ffc3d7 45%,#e9c7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-family:"Cormorant Garamond",serif;font-size:clamp(21px,4vw,31px);color:#e8dbe2;max-width:680px;margin:auto;line-height:1.35}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;padding:14px 22px;border-radius:999px;backdrop-filter:blur(14px);transition:.25s;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.13)}
+.btn.primary{border-color:rgba(255,180,202,.4);background:linear-gradient(120deg,#e95e8b,#a55bda);box-shadow:0 10px 40px rgba(232,92,139,.25)}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.scene-title{font-size:clamp(39px,9vw,72px);line-height:.95;margin:10px 0 12px}
+.scene-sub{color:var(--muted);font-size:15px;line-height:1.55;max-width:620px;margin:0 auto 25px}
+.progress{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:30;display:flex;gap:6px;padding:7px 10px;border:1px solid var(--line);background:rgba(10,7,12,.5);backdrop-filter:blur(15px);border-radius:999px}
+.dot{width:6px;height:6px;border-radius:50%;background:#5f5360;transition:.4s}.dot.done{background:var(--pink);box-shadow:0 0 12px var(--rose)}.dot.current{transform:scale(1.5);background:#fff}
+.panda{position:fixed;right:16px;bottom:16px;width:92px;z-index:25;filter:drop-shadow(0 12px 22px rgba(0,0,0,.35));animation:pandaFloat 3s ease-in-out infinite;cursor:pointer}
+.panda .speech{position:absolute;right:78px;bottom:54px;width:220px;padding:12px 14px;border:1px solid var(--line);border-radius:18px 18px 4px 18px;background:rgba(25,15,25,.88);backdrop-filter:blur(12px);font-size:12px;line-height:1.4;color:#f8eaf0;opacity:0;transform:translateY(7px) scale(.96);pointer-events:none;transition:.25s}
+.panda.show .speech{opacity:1;transform:none}
+.panda-art{width:72px;height:72px;margin-left:auto;position:relative}
+.panda-head{position:absolute;inset:4px;background:#fff;border-radius:48% 48% 45% 45%;border:3px solid #171219}
+.ear{position:absolute;width:24px;height:24px;background:#171219;border-radius:50%;top:0}.ear.l{left:0}.ear.r{right:0}
+.eye{position:absolute;width:12px;height:16px;background:#171219;border-radius:50%;top:27px}.eye.l{left:18px}.eye.r{right:18px}
+.eye:after{content:"";position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;top:4px;left:3px}
+.nose{position:absolute;width:10px;height:7px;background:#171219;border-radius:50%;left:31px;top:42px}.mouth{position:absolute;width:15px;height:8px;border-bottom:2px solid #171219;border-radius:50%;left:28px;top:45px}
+.cake-area{position:relative;width:min(420px,90vw);height:300px;margin:8px auto 18px;display:grid;place-items:center}
+.cake{position:relative;width:230px;height:130px;filter:drop-shadow(0 24px 25px rgba(0,0,0,.4))}
+.cake-top{position:absolute;left:0;top:0;width:230px;height:70px;border-radius:50%;background:#f1c7d2;box-shadow:inset 0 -8px 0 rgba(0,0,0,.08)}
+.cake-body{position:absolute;left:8px;top:32px;width:214px;height:90px;border-radius:12px 12px 28px 28px;background:linear-gradient(90deg,#b77c88,#e0aebc,#b87988);border-bottom:7px solid #f2d8df}
+.cake.drip .cake-top:after{content:"";position:absolute;left:20px;right:20px;bottom:7px;height:28px;background:#fff0f4;border-radius:0 0 20px 20px;clip-path:polygon(0 0,100% 0,100% 50%,90% 50%,87% 100%,76% 100%,73% 52%,60% 52%,57% 85%,46% 85%,43% 52%,27% 52%,23% 100%,12% 100%,9% 52%,0 52%)}
+.cake.choc .cake-top{background:#6b3b31}.cake.choc .cake-body{background:linear-gradient(90deg,#4c2923,#7a4638,#4d2a24)}
+.cake.straw .cake-top{background:#f5a1b5}.cake.straw .cake-body{background:linear-gradient(90deg,#bb5e79,#ef91aa,#bd607b)}
+.candles{position:absolute;top:-65px;left:50%;transform:translateX(-50%);display:flex;gap:24px}
+.candle{width:10px;height:55px;border-radius:5px;background:repeating-linear-gradient(135deg,#fff 0 7px,#e89db5 7px 14px);position:relative}
+.flame{position:absolute;width:17px;height:25px;left:-3px;top:-23px;background:radial-gradient(circle at 50% 70%,#fff 0 18%,#ffd66e 20% 45%,#ff7a52 48% 72%,transparent 74%);border-radius:50% 50% 50% 0;transform:rotate(-45deg);animation:flicker .7s infinite alternate}
+.candle.off .flame{display:none}
+.cake-choice{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.choice{padding:11px 15px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#eee;transition:.25s}
+.choice.active{border-color:#ffabc5;background:rgba(255,128,167,.16);box-shadow:0 0 25px rgba(255,100,150,.12)}
+.balloon-field{position:relative;height:390px;max-width:700px;margin:0 auto}
+.balloon{position:absolute;width:82px;height:105px;border-radius:50% 50% 46% 46%;border:1px solid rgba(255,255,255,.28);box-shadow:inset -15px -12px 22px rgba(0,0,0,.16),0 15px 35px rgba(0,0,0,.25);animation:balloonFloat var(--dur) ease-in-out infinite alternate;touch-action:manipulation}
+.balloon:before{content:"";position:absolute;bottom:-7px;left:50%;width:8px;height:10px;transform:translateX(-50%);background:inherit;clip-path:polygon(0 0,100% 0,50% 100%)}
+.balloon:after{content:"";position:absolute;bottom:-150px;left:50%;width:1px;height:145px;background:rgba(255,255,255,.25)}
+.balloon:nth-child(1){left:6%;top:55px;background:radial-gradient(circle at 30% 22%,#fff9 0 5%,transparent 7%),linear-gradient(135deg,#f06b96,#b53f75);--dur:2.8s}
+.balloon:nth-child(2){left:26%;top:8px;background:radial-gradient(circle at 30% 22%,#fff9 0 5%,transparent 7%),linear-gradient(135deg,#7d8cff,#4e54b9);--dur:3.2s}
+.balloon:nth-child(3){left:48%;top:75px;background:radial-gradient(circle at 30% 22%,#fff9 0 5%,transparent 7%),linear-gradient(135deg,#d58cff,#8a42b2);--dur:2.5s}
+.balloon:nth-child(4){right:25%;top:18px;background:radial-gradient(circle at 30% 22%,#fff9 0 5%,transparent 7%),linear-gradient(135deg,#f0b66b,#bd6a38);--dur:3.4s}
+.balloon:nth-child(5){right:5%;top:75px;background:radial-gradient(circle at 30% 22%,#fff9 0 5%,transparent 7%),linear-gradient(135deg,#75d6cc,#308c8c);--dur:2.9s}
+.balloon.popped{animation:pop .42s forwards;pointer-events:none}
+.message-card{min-height:155px;display:grid;place-items:center;padding:28px;border:1px solid rgba(255,190,210,.2);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.035));backdrop-filter:blur(18px);box-shadow:0 25px 70px rgba(0,0,0,.28);max-width:700px;margin:0 auto}
+.message-card p{font-family:"Cormorant Garamond",serif;font-size:clamp(25px,5vw,38px);line-height:1.2;color:#fff0f5}
+.counter{margin-top:14px;color:#a995a0;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.photo-wrap{width:min(360px,78vw);margin:0 auto 22px;position:relative;transform:rotate(-2deg)}
+.photo-wrap:before{content:"";position:absolute;inset:-10px;background:linear-gradient(120deg,#f3d18d,#ff9bb8,#b38aff);border-radius:8px;filter:blur(1px);z-index:-1}
+.photo-wrap img{display:block;width:100%;border-radius:5px;box-shadow:0 25px 70px rgba(0,0,0,.5)}
+.caption{font-family:"Cormorant Garamond",serif;font-size:28px;color:#f6dfe7}
+.love-stage{height:350px;display:grid;place-items:center;position:relative}
+.love{font-family:"Cormorant Garamond",serif;font-size:clamp(90px,22vw,190px);letter-spacing:.05em;background:linear-gradient(120deg,#fff,#ff8eb1,#d79aff,#fff);background-size:250%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:loveFloat 4s ease-in-out infinite,shine 5s linear infinite;filter:drop-shadow(0 0 30px rgba(255,120,170,.28))}
+.love-heart{position:absolute;font-size:32px;animation:orbit 7s linear infinite;left:50%;top:50%}
+.envelope{width:min(330px,80vw);height:210px;margin:20px auto;position:relative;perspective:700px;cursor:pointer}
+.env-body{position:absolute;inset:0;border-radius:12px;background:linear-gradient(145deg,#f7c6d3,#a95a80);box-shadow:0 30px 60px rgba(0,0,0,.35);overflow:hidden}
+.env-flap{position:absolute;z-index:3;left:0;top:0;width:0;height:0;border-left:165px solid transparent;border-right:165px solid transparent;border-top:105px solid #d887a4;transform-origin:top;transition:.7s}
+.envelope.open .env-flap{transform:rotateX(165deg)}
+.env-letter{position:absolute;z-index:2;left:10%;width:80%;height:82%;top:15%;background:#fff7f9;color:#432535;padding:25px 18px;border-radius:6px;font-family:"Cormorant Garamond",serif;font-size:22px;line-height:1.2;transform:translateY(40px);transition:.7s}
+.envelope.open .env-letter{transform:translateY(-38px)}
+.final-card{max-width:760px;margin:auto;padding:34px 26px;border:1px solid rgba(255,190,210,.2);border-radius:32px;background:rgba(255,255,255,.065);backdrop-filter:blur(20px);box-shadow:0 30px 90px rgba(0,0,0,.35)}
+.final-card h2{font-size:clamp(42px,10vw,82px);margin-bottom:16px}
+.final-card p{font-family:"Cormorant Garamond",serif;font-size:clamp(21px,4vw,29px);line-height:1.42;color:#f3e3e9}
+.signature{margin-top:25px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.secret{margin-top:18px;color:#bdaab5;font-size:12px}
+#burstLayer{position:fixed;inset:0;pointer-events:none;z-index:40}
+.spark{position:absolute;width:8px;height:8px;border-radius:50%;animation:spark 800ms cubic-bezier(.2,.8,.3,1) forwards}
+.confetti{position:absolute;width:7px;height:13px;animation:conf 1.2s cubic-bezier(.2,.7,.2,1) forwards}
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);z-index:60;padding:11px 15px;border-radius:999px;background:rgba(20,12,20,.9);border:1px solid var(--line);backdrop-filter:blur(12px);font-size:12px;opacity:0;transition:.35s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.music{position:fixed;left:16px;bottom:16px;z-index:25;display:flex;gap:7px}
+.small-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(15,10,17,.62);color:white;backdrop-filter:blur(12px)}
+input[type=file]{display:none}
+.upload-label{display:inline-block;margin-top:10px;color:#d8c7cf;font-size:12px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+@keyframes pandaFloat{50%{transform:translateY(-6px)}}
+@keyframes flicker{to{transform:rotate(-40deg) scale(1.1) translate(1px,-2px)}}
+@keyframes balloonFloat{to{transform:translateY(-16px) rotate(3deg)}}
+@keyframes pop{0%{transform:scale(1);opacity:1}55%{transform:scale(1.35);opacity:.8}100%{transform:scale(0);opacity:0}}
+@keyframes spark{to{transform:translate(var(--x),var(--y)) rotate(500deg);opacity:0}}
+@keyframes conf{to{transform:translate(var(--x),var(--y)) rotate(720deg);opacity:0}}
+@keyframes loveFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.025)}}
+@keyframes shine{to{background-position:250%}}
+@keyframes orbit{to{transform:rotate(360deg) translateX(135px) rotate(-360deg)}}
+@media(max-width:600px){
+ .panda{width:76px}.panda-art{width:62px;height:62px}.panda .speech{right:58px;width:190px}
+ .balloon{width:68px;height:88px}.balloon:after{bottom:-120px;height:115px}
+ .balloon-field{height:330px}.balloon:nth-child(1){left:2%}.balloon:nth-child(2){left:23%}.balloon:nth-child(3){left:46%}.balloon:nth-child(4){right:21%}.balloon:nth-child(5){right:1%}
+ .cake-area{height:255px}.cake{transform:scale(.85)}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="noise"></div><canvas id="particles"></canvas>
+<div class="progress" id="progress"></div>
+
+<section class="screen active" data-step="0">
+ <div class="content">
+  <div class="eyebrow">a little world made for one person</div>
+  <h1 class="hero-title"><span>For</span><span>Sundori Intisara</span></h1>
+  <p class="lead">Someone very special deserves more than a birthday wish.</p>
+  <div class="actions"><button class="btn primary" onclick="go(1)">Open your surprise ✦</button></div>
+ </div>
+</section>
+
+<section class="screen" data-step="1">
+ <div class="content">
+  <div class="eyebrow">chapter one · choose your cake</div>
+  <h2 class="scene-title">First, make a wish.</h2>
+  <p class="scene-sub">Choose the cake you'd like to celebrate with. The panda says this choice is important. Apparently, he is very serious about cake.</p>
+  <div class="cake-area">
+   <div class="cake drip" id="cake">
+    <div class="candles">
+      <div class="candle" id="c1"><span class="flame"></span></div>
+      <div class="candle" id="c2"><span class="flame"></span></div>
+      <div class="candle" id="c3"><span class="flame"></span></div>
+    </div>
+    <div class="cake-top"></div><div class="cake-body"></div>
+   </div>
+  </div>
+  <div class="cake-choice">
+   <button class="choice active" onclick="cakeChoice('vanilla',this)">Vanilla 🍰</button>
+   <button class="choice" onclick="cakeChoice('choc',this)">Dark Chocolate 🍫</button>
+   <button class="choice" onclick="cakeChoice('straw',this)">Strawberry 🍓</button>
+  </div>
+  <div class="actions"><button class="btn primary" onclick="go(2)">Okay… what's next?</button></div>
+ </div>
+</section>
+
+<section class="screen" data-step="2">
+ <div class="content">
+  <div class="eyebrow">chapter two · five little secrets</div>
+  <h2 class="scene-title">Pop them. One at a time.</h2>
+  <p class="scene-sub">Each balloon is hiding a little piece of what I wanted to tell you.</p>
+  <div class="balloon-field" id="balloons">
+   <button class="balloon" aria-label="Balloon 1" onclick="popBalloon(0)"></button>
+   <button class="balloon" aria-label="Balloon 2" onclick="popBalloon(1)"></button>
+   <button class="balloon" aria-label="Balloon 3" onclick="popBalloon(2)"></button>
+   <button class="balloon" aria-label="Balloon 4" onclick="popBalloon(3)"></button>
+   <button class="balloon" aria-label="Balloon 5" onclick="popBalloon(4)"></button>
+  </div>
+  <div class="message-card"><p id="messageText">Pop a balloon to reveal the first one. ✦</p></div>
+  <div class="counter" id="balloonCounter">0 / 5 revealed</div>
+ </div>
+</section>
+
+<section class="screen" data-step="3">
+ <div class="content">
+  <div class="eyebrow">chapter three · one memory</div>
+  <h2 class="scene-title">A moment worth keeping.</h2>
+  <p class="scene-sub">Some memories don't need a long explanation. They just need to be remembered.</p>
+  <div class="photo-wrap"><img id="photo" alt="A birthday memory"></div>
+  <div class="caption">And somehow, you make ordinary moments feel special.</div>
+  <div class="actions"><button class="btn primary" onclick="go(4)">Keep going ✦</button></div>
+ </div>
+</section>
+
+<section class="screen" data-step="4">
+ <div class="content">
+  <div class="eyebrow">chapter four · something in the air</div>
+  <h2 class="scene-title">There is one word I keep coming back to.</h2>
+  <div class="love-stage">
+   <div class="love-heart">♡</div>
+   <div class="love">LOVE</div>
+  </div>
+  <p class="lead">Not loud. Not complicated. Just something that keeps floating back to you.</p>
+  <div class="actions"><button class="btn primary" onclick="go(5)">I think there's more…</button></div>
+ </div>
+</section>
+
+<section class="screen" data-step="5">
+ <div class="content">
+  <div class="eyebrow">chapter five · one last little challenge</div>
+  <h2 class="scene-title">Make a wish, Sundori.</h2>
+  <p class="scene-sub">The candles are waiting. If your microphone is allowed, give them a little blow. Otherwise, tap the button.</p>
+  <div class="cake-area" style="height:245px">
+   <div class="cake" id="cake2">
+    <div class="candles">
+      <div class="candle" id="d1"><span class="flame"></span></div>
+      <div class="candle" id="d2"><span class="flame"></span></div>
+      <div class="candle" id="d3"><span class="flame"></span></div>
+    </div>
+    <div class="cake-top"></div><div class="cake-body"></div>
+   </div>
+  </div>
+  <div class="actions"><button class="btn primary" id="blowBtn" onclick="blowCandles()">Blow out the candles ✨</button></div>
+  <div class="secret" id="blowHint"></div>
+ </div>
+</section>
+
+<section class="screen" data-step="6">
+ <div class="content">
+  <div class="eyebrow">chapter six · you found it</div>
+  <h2 class="scene-title">There's something here for you.</h2>
+  <p class="scene-sub">The panda has been guarding this one. Tap the envelope.</p>
+  <div class="envelope" id="envelope" onclick="openEnvelope()">
+   <div class="env-body"></div>
+   <div class="env-letter">For Sundori Intisara,<br><br>there's still one more thing I wanted you to know…</div>
+   <div class="env-flap"></div>
+  </div>
+  <div class="actions"><button class="btn primary" id="finalBtn" style="display:none" onclick="go(7)">Open the final surprise ❤️</button></div>
+ </div>
+</section>
+
+<section class="screen" data-step="7">
+ <div class="content">
+  <div class="final-card">
+   <div class="eyebrow">for you · today & always</div>
+   <h2>Happy Birthday,<br>Sundori Intisara ❤️</h2>
+   <p>
+    I hope your birthday gives you a beautiful day, and I hope the life ahead of you becomes even better, brighter, and happier.
+    <br><br>
+    And if life lets me stay beside you, I want to see those better days with you.
+    <br><br>
+    I may not always care much about myself, but I care deeply about you, your happiness, and the life you deserve.
+   </p>
+   <div class="signature">— Sayeed</div>
+   <div class="actions"><button class="btn" onclick="location.reload()">Replay the whole thing ↻</button></div>
+  </div>
+ </div>
+</section>
+
+<div class="panda" id="panda" onclick="pandaTalk()">
+ <div class="speech" id="pandaSpeech">Hey! I'm your little guide. Tap me if you get stuck. 🐼</div>
+ <div class="panda-art">
+  <div class="ear l"></div><div class="ear r"></div><div class="panda-head"></div>
+  <div class="eye l"></div><div class="eye r"></div><div class="nose"></div><div class="mouth"></div>
+ </div>
+</div>
+
+<div class="music">
+ <button class="small-btn" onclick="toggleMusic()" id="musicBtn">♫</button>
+ <label class="small-btn" style="display:grid;place-items:center" title="Add your music">
+  ＋<input type="file" id="musicInput" accept="audio/*">
+ </label>
+</div>
+<div id="burstLayer"></div><div class="toast" id="toast"></div>
+<audio id="audio" loop></audio>
+</div>
+
+<script>
+const messages=[
+"Happy birthday to the girl who holds my heart and makes every single day brighter.",
+"Seeing you smile is a real blessing to me.",
+"Happy birthday to the angel who changed my world.",
+"You are the most important piece of my entity.",
+"Every time I yearn for you, I just think about how to succeed ASAP, because I want you to be there beside me."
+];
+let step=0, popped=0, candleDone=false, audioReady=false;
+const screens=[...document.querySelectorAll('.screen')];
+const progress=document.getElementById('progress');
+for(let i=0;i<screens.length;i++){let d=document.createElement('i');d.className='dot';progress.appendChild(d)}
+function updateProgress(){[...progress.children].forEach((d,i)=>d.className='dot '+(i<step?'done ':'')+(i===step?'current':''))}
+updateProgress();
+
+function go(n){
+ step=n;
+ screens.forEach((s,i)=>s.classList.toggle('active',i===step));
+ updateProgress();
+ window.scrollTo(0,0);
+ const lines=[
+  "Welcome. I think you're going to like this. ✦",
+  "Choose carefully. A birthday this important needs the right cake.",
+  "Now we're getting somewhere… pop them one by one!",
+  "That photo deserved its own little moment.",
+  "You found the word. But don't overthink it.",
+  "Okay, birthday girl — make that wish.",
+  "The panda has one final secret.",
+  "Happy birthday, Sundori. ❤️"
+ ];
+ pandaSay(lines[step]||"Keep going…");
+ if(n===5) startCandleBreathing();
+}
+
+function cakeChoice(type,el){
+ document.querySelectorAll('.choice').forEach(x=>x.classList.remove('active'));el.classList.add('active');
+ const c=document.getElementById('cake');c.className='cake drip '+type;
+ burst(window.innerWidth/2,window.innerHeight/2,18);
+}
+
+function popBalloon(i){
+ const b=document.querySelectorAll('.balloon')[i];
+ if(b.classList.contains('popped')) return;
+ b.classList.add('popped');popped++;
+ burst(b.getBoundingClientRect().left+b.offsetWidth/2,b.getBoundingClientRect().top+b.offsetHeight/2,30);
+ setTimeout(()=>{
+   document.getElementById('messageText').animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:450,easing:'cubic-bezier(.2,.8,.2,1)'});
+   document.getElementById('messageText').textContent=messages[i];
+ },120);
+ document.getElementById('balloonCounter').textContent=popped+' / 5 revealed';
+ if(popped===5){
+   setTimeout(()=>{pandaSay("You got all five. I think you're ready for the next memory.");setTimeout(()=>go(3),1500)},1300);
+ }else pandaSay(["That was one! Four more.","Nice. Keep going.","Three left. You're doing great.","Two more…","One last balloon!"][popped-1]);
+}
+
+function burst(x,y,count=22){
+ for(let i=0;i<count;i++){
+  const s=document.createElement('span');s.className='spark';
+  s.style.left=x+'px';s.style.top=y+'px';
+  s.style.background=`hsl(${Math.random()*50+320}, ${70+Math.random()*20}%, ${65+Math.random()*20}%)`;
+  s.style.setProperty('--x',(Math.random()*220-110)+'px');
+  s.style.setProperty('--y',(Math.random()*220-110)+'px');
+  document.getElementById('burstLayer').appendChild(s);setTimeout(()=>s.remove(),900);
+ }
+ for(let i=0;i<Math.min(18,count);i++){
+  const c=document.createElement('span');c.className='confetti';c.style.left=x+'px';c.style.top=y+'px';
+  c.style.background=`hsl(${Math.random()*360},80%,75%)`;c.style.setProperty('--x',(Math.random()*360-180)+'px');c.style.setProperty('--y',(Math.random()*380-180)+'px');
+  document.getElementById('burstLayer').appendChild(c);setTimeout(()=>c.remove(),1400);
+ }
+}
+
+function blowCandles(){
+ ['d1','d2','d3'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('off'),i*280));
+ burst(innerWidth/2,innerHeight/2,45);
+ candleDone=true;
+ pandaSay("Wish made. Now I can finally show you what I was hiding.");
+ setTimeout(()=>go(6),1600);
+}
+function startCandleBreathing(){
+ const hint=document.getElementById('blowHint');
+ if(!navigator.mediaDevices?.getUserMedia){hint.textContent="Microphone isn't needed — just tap the button when you're ready.";return}
+ hint.textContent="You can tap the button, or allow microphone access if you want the candle-blowing effect.";
+}
+function openEnvelope(){
+ const e=document.getElementById('envelope'); if(e.classList.contains('open'))return;
+ e.classList.add('open');burst(innerWidth/2,innerHeight/2,45);
+ setTimeout(()=>document.getElementById('finalBtn').style.display='inline-block',700);
+ pandaSay("Okay… this is the part I was waiting for. ❤️");
+}
+function pandaTalk(){
+ const tips=[
+ "I told you there were surprises. 😌",
+ "Don't worry, I'm keeping the secrets.",
+ "Tap the obvious things. I'm a panda, not a magician. 🐼",
+ "You're doing perfectly.",
+ "One step at a time…"
+ ];
+ pandaSay(tips[step%tips.length]);
+}
+function pandaSay(text){
+ const p=document.getElementById('panda'),s=document.getElementById('pandaSpeech');s.textContent=text;p.classList.add('show');
+ clearTimeout(window.pt);window.pt=setTimeout(()=>p.classList.remove('show'),4200);
+}
+document.getElementById('musicInput').addEventListener('change',e=>{
+ const file=e.target.files[0];if(!file)return;
+ const a=document.getElementById('audio');a.src=URL.createObjectURL(file);audioReady=true;
+ a.play().then(()=>document.getElementById('musicBtn').textContent='❚❚').catch(()=>{});
+});
+function toggleMusic(){
+ const a=document.getElementById('audio');
+ if(!audioReady){toast("Add your music with the ＋ button first.");return}
+ if(a.paused){a.play();document.getElementById('musicBtn').textContent='❚❚'}else{a.pause();document.getElementById('musicBtn').textContent='♫'}
+}
+function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),2200)}
+
+const canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');let W,H,pts=[];
+function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
+function initPts(){pts=Array.from({length:70},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.8+.3,v:Math.random()*.22+.05,a:Math.random()*.65+.15}))}
+function draw(){
+ ctx.clearRect(0,0,innerWidth,innerHeight);
+ for(const p of pts){p.y-=p.v;if(p.y<0)p.y=innerHeight;ctx.globalAlpha=p.a;ctx.fillStyle='#ffdce8';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()}
+ requestAnimationFrame(draw)
+}
+addEventListener('resize',()=>{resize();initPts()});resize();initPts();draw();
+setTimeout(()=>pandaSay("Hi. I'm the guide. Don't worry — I won't spoil anything. 🐼"),900);
+</script>
+</body>
+</html>
